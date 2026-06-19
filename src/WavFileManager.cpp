@@ -12,13 +12,30 @@ bool WavFileManager::loadWav(std::string filePath)
         file.read(format, 4);
         file.read(subChunk1ID, 4);
         file.read(reinterpret_cast<char*>(&subChunk1Size), sizeof(subChunk1Size));
-        file.read(reinterpret_cast<char*>(&audioFormat), sizeof(audioFormat));
+        file.read(reinterpret_cast<char*>(&audioFormat), 2);
         file.read(reinterpret_cast<char*>(&numChannels), sizeof(numChannels));
         file.read(reinterpret_cast<char*>(&sampleRate), sizeof(sampleRate));
         file.read(reinterpret_cast<char*>(&byteRate), sizeof(byteRate));
         file.read(reinterpret_cast<char*>(&blockAlign), sizeof(blockAlign));
         file.read(reinterpret_cast<char*>(&bitsPerSample), sizeof(bitsPerSample));
-        file.read(subChunk2ID, 4);
+
+        char searchBuffer[4] = {0};
+        while(!file.eof())
+        {
+            file.read(searchBuffer, 4);
+            
+            if(searchBuffer[0] == 'd' && searchBuffer[1] == 'a' &&
+                searchBuffer[2] == 't' && searchBuffer[3] == 'a')
+                {
+                    subChunk2ID[0] = 'd'; subChunk2ID[1] = 'a'; 
+                    subChunk2ID[2] = 't'; subChunk2ID[3] = 'a';
+                    break; // Döngüden çık
+                }
+
+                // 4 ileri geldiğimiz için 3 geri gittik ve 1 byte ilerledik
+                file.seekg(-3, std::ios::cur);
+        }
+
         file.read(reinterpret_cast<char*>(&subChunk2Size), sizeof(subChunk2Size));
         
         file.seekg(0, std::ios::end);
