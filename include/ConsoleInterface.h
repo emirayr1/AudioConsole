@@ -1,8 +1,17 @@
 #pragma once
 
 #include <iostream>
+#include <string>
+#include <functional>
 #include "WavFileManager.h"
 #include "AudioProcessor.h"
+
+
+struct MenuItem{
+    char key;
+    std::string text;
+    std::function<void()> action;
+};
 
 enum class MenuOption
 {
@@ -26,24 +35,22 @@ enum class EffectMenuOption
 class ConsoleInterface
 {
 public:
-    void displayMainMenu();
+    void showMenu(const std::string& title, const std::vector<MenuItem>& items);
     void displayEffectMenu();
+    void displayMainMenu();
+    
+    
     void displayDistortionOptions();
-    void handleMenuSelection(MenuOption option);
-    void handleEffectSelection(EffectMenuOption option);
-    void handleGainTest();
+    void displayReverbOptions();
+    void displayGainOptions();
 
     bool c_loadWav();
     bool c_saveWav();
 
     int run();
 
-    MenuOption getMenuSelection();
-    EffectMenuOption getEffectMenuSelection();
-
     WavFileManager FileManager;
     AudioProcessor Processor;
-
 
     std::string filePath;
 };

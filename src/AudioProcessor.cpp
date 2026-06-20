@@ -36,6 +36,7 @@ void AudioProcessor::applyEffect(std::vector<float>& buffer)
 {
     for(auto& eff : effectChain)
     {
+        std::cout << eff->getName() << " is processing right now" << std::endl;
         eff->process(buffer);
     }
 }

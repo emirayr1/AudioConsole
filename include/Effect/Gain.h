@@ -1,4 +1,5 @@
 #include "AudioEffect.h"
+#include <string>
 
 class Gain : public AudioEffect
 {
@@ -8,5 +9,6 @@ public:
 
     void process(std::vector<float>& buffer) override;
 
+    std::string getName() const override {return "Gain";}
     float m_value;
 };

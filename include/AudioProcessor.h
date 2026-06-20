@@ -20,9 +20,12 @@ public:
     AudioProcessor();
     ~AudioProcessor();
 
-    std::vector<std::unique_ptr<AudioEffect>> effectChain;
-
-
+    
+    const std::vector<std::unique_ptr<AudioEffect>>& getEffectChain() const { return effectChain; }
+    
     void updateEffectChain(EffectType mainType, int subType = 0);
     void applyEffect(std::vector<float>& buffer);
+
+    
+    std::vector<std::unique_ptr<AudioEffect>> effectChain;
 };

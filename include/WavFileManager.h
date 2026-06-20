@@ -29,6 +29,6 @@ public:
 
     std::vector<float> audioBuffer;
 
-    std::vector<float> getAudioBuffer() { return audioBuffer; }
+    std::vector<float>& getAudioBuffer() { return audioBuffer; }
 private:
 };
