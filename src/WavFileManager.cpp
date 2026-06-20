@@ -228,7 +228,6 @@ bool WavFileManager::saveWav(std::string filePath)
     }
 }
 
-
 void WavFileManager::printInfo()
 {
     if(audioBuffer.size() > 0)

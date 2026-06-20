@@ -28,5 +28,7 @@ public:
     double durationInSeconds = 0;
 
     std::vector<float> audioBuffer;
+
+    std::vector<float> getAudioBuffer() { return audioBuffer; }
 private:
 };

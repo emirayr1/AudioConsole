@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include "WavFileManager.h"
+#include "AudioProcessor.h"
 
 enum class MenuOption
 {
@@ -14,11 +15,23 @@ enum class MenuOption
     Invalid
 };
 
+enum class EffectMenuOption
+{
+    Distortion = '1',
+    Reverb = '2',
+    Gain = '3',
+    Exit = '4'
+};
+
 class ConsoleInterface
 {
 public:
     void displayMainMenu();
+    void displayEffectMenu();
+    void displayDistortionOptions();
     void handleMenuSelection(MenuOption option);
+    void handleEffectSelection(EffectMenuOption option);
+    void handleGainTest();
 
     bool c_loadWav();
     bool c_saveWav();
@@ -26,7 +39,10 @@ public:
     int run();
 
     MenuOption getMenuSelection();
+    EffectMenuOption getEffectMenuSelection();
+
     WavFileManager FileManager;
+    AudioProcessor Processor;
 
 
     std::string filePath;

@@ -21,6 +21,24 @@ MenuOption ConsoleInterface::getMenuSelection()
     return MenuOption::Invalid;
 }
 
+EffectMenuOption ConsoleInterface::getEffectMenuSelection()
+{
+    std::string line;
+    std::getline(std::cin, line);
+
+    if(line.empty() || line.length() > 1){
+        return EffectMenuOption::Exit;
+    }
+
+    EffectMenuOption selected = static_cast<EffectMenuOption>(line[0]);
+
+    if(selected >= EffectMenuOption::Distortion && selected <= EffectMenuOption::Exit){
+        return selected;
+    }
+
+    return EffectMenuOption::Exit;
+}
+
 void ConsoleInterface::displayMainMenu()
 {
     std::cout << "WELCOME THE AUDIO CONSOLE\n";
@@ -49,6 +67,8 @@ void ConsoleInterface::handleMenuSelection(MenuOption option)
         displayMainMenu();
         break;
     case MenuOption::ApplyEffect:
+        displayEffectMenu();
+        displayMainMenu();
         break;
     case MenuOption::CropFile:
         break;
@@ -90,11 +110,60 @@ bool ConsoleInterface::c_saveWav()
         filePath = filePath.substr(1, filePath.size() - 2);
     }
 
+    Processor.applyEffect(FileManager.getAudioBuffer());
+
     if(FileManager.saveWav(filePath)){ return true; }
     else{
         std::cerr << "Failed to save Wave file.\n";
         return false;
     }
+}
+
+void ConsoleInterface::displayEffectMenu()
+{
+    std::cout << "Please Choose Effect Type" << std::endl;
+    std::cout << "1 - Distortion" << std::endl;
+    std::cout << "2 - Reverb" << std::endl;
+    std::cout << "3 - Gain" << std::endl;
+    std::cout << "4 - Exit" << std::endl;
+
+    EffectMenuOption selectedEffect = getEffectMenuSelection();
+    handleEffectSelection(selectedEffect);
+}
+
+void ConsoleInterface::handleEffectSelection(EffectMenuOption option)
+{
+    switch (option)
+    {
+    case EffectMenuOption::Distortion:
+        displayDistortionOptions();
+        break;
+    case EffectMenuOption::Reverb:
+        break;
+    case EffectMenuOption::Gain:
+        std::cout << "Please Enter Gain Value Between 0 and 1" << std::endl;
+        handleGainTest();
+        break;
+    default:
+        break;
+    }
+}
+
+void ConsoleInterface::handleGainTest()
+{
+    std::string input;
+    std::cin >> input;
+
+    Processor.updateEffectChain(AudioProcessor::EffectType::Gain);
+}
+
+void ConsoleInterface::displayDistortionOptions()
+{
+    std::cout << "Please Choose Distortion Type" << std::endl;
+    std::cout << "1 - Hardclip" << std::endl;
+    std::cout << "2 - Softclip" << std::endl;
+    std::cout << "3 - Fuzz" << std::endl;
+    std::cout << "4 - Exit" << std::endl;
 }
 
 int ConsoleInterface::run()
