@@ -28,7 +28,7 @@ void ConsoleInterface::displayMainMenu()
     std::cout << "2 - Basic Info" << std::endl;
     std::cout << "3 - Apply Effect" << std::endl;
     std::cout << "4 - Crop File" << std::endl;
-    std::cout << "5 - Change Wav File" << std::endl;
+    std::cout << "5 - Save Wav File" << std::endl;
     std::cout << "6 - Exit" << std::endl;
     
     MenuOption selectedOption = getMenuSelection();
@@ -43,17 +43,17 @@ void ConsoleInterface::handleMenuSelection(MenuOption option)
         std::cout << "Loading Wav" << std::endl;
         c_loadWav();
         displayMainMenu();
-
         break;
     case MenuOption::BasicInfo:
+        FileManager.printInfo();
+        displayMainMenu();
         break;
     case MenuOption::ApplyEffect:
         break;
     case MenuOption::CropFile:
         break;
-    case MenuOption::ChangeWavFile:
-        break;
     case MenuOption::SaveWavFile:
+        c_saveWav();
         break;
     case MenuOption::Exit:
         break;
@@ -72,14 +72,27 @@ bool ConsoleInterface::c_loadWav()
         filePath = filePath.substr(1, filePath.size() - 2);
     }
 
-    WavFileManager FileManager;
     
-    if(FileManager.loadWav(filePath)){
-        // FileManager.saveWav();
-        return true;
-    }
+    if(FileManager.loadWav(filePath)){ return true; }
     else{
         std::cerr << "Failed to open or parse Wave file.\n";
+        return false;
+    }
+}
+
+bool ConsoleInterface::c_saveWav()
+{
+    std::cout << "Please Enter Valid File Path" << std::endl;
+    std::getline(std::cin, filePath);
+
+    if(!filePath.empty() && filePath.front() == '"' && filePath.back() == '"')
+    {
+        filePath = filePath.substr(1, filePath.size() - 2);
+    }
+
+    if(FileManager.saveWav(filePath)){ return true; }
+    else{
+        std::cerr << "Failed to save Wave file.\n";
         return false;
     }
 }

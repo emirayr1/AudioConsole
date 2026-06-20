@@ -1,13 +1,14 @@
 #pragma once
 
 #include <iostream>
+#include <vector>
 
 class WavFileManager
 {
 public:
     bool loadWav(std::string filePath);
     bool saveWav(std::string filePath);
-
+    void printInfo();
 
     char chunkID[4];
     uint32_t chunkSize = 0;
@@ -25,5 +26,7 @@ public:
     
     uint64_t fileSize = 0;
     double durationInSeconds = 0;
+
+    std::vector<float> audioBuffer;
 private:
 };
