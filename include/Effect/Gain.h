@@ -4,11 +4,19 @@
 class Gain : public AudioEffect
 {
 public:
-    Gain(float value)
-    :  m_value(value) {}
+
+    enum class GainType
+    {
+        Linear,
+        Decibel
+    };
+
+    Gain(float value, GainType gainType)
+    :  m_value(value), m_gainType(gainType) {}
 
     void process(std::vector<float>& buffer) override;
 
     std::string getName() const override {return "Gain";}
     float m_value;
+    GainType m_gainType;
 };

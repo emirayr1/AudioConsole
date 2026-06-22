@@ -99,7 +99,6 @@ void ConsoleInterface::displayGainOptions()
     showMenu("Gain Options", distM);
 }
 
-
 bool ConsoleInterface::c_loadWav()
 {
     std::cout << "Please Enter Valid File Path" << std::endl;

@@ -11,7 +11,7 @@ void AudioProcessor::updateEffectChain(EffectType effectType, int subType)
 {
     std::unique_ptr<AudioEffect> effect = nullptr;
     auto distType = Distortion::DistortionType::SoftClip;
-
+    auto gainType = Gain::GainType::Linear;
     switch (effectType)
     {
     case EffectType::Distortion:
@@ -22,7 +22,8 @@ void AudioProcessor::updateEffectChain(EffectType effectType, int subType)
     case EffectType::Reverb:
         break;
     case EffectType::Gain:
-        effect = std::make_unique<Gain>(0.1f);
+        gainType = static_cast<Gain::GainType>(subType); 
+        effect = std::make_unique<Gain>(0.1f, gainType);
     default:
         break;
     }
@@ -40,4 +41,3 @@ void AudioProcessor::applyEffect(std::vector<float>& buffer)
         eff->process(buffer);
     }
 }
-
