@@ -228,6 +228,24 @@ bool WavFileManager::saveWav(std::string filePath)
     }
 }
 
+void WavFileManager::cropWaveFile(std::pair<float, float> range, int type)
+{
+    size_t startSample;
+    size_t endSample;
+
+    if(type == 0)
+    {
+        startSample = static_cast<size_t>(range.first * sampleRate) * numChannels;
+        endSample = static_cast<size_t>(range.second * sampleRate) * numChannels;
+    }
+    else if(type == 1){
+        startSample = range.first;
+        endSample = range.second;
+    }
+
+    audioBuffer.assign(audioBuffer.begin() + startSample, audioBuffer.begin() + endSample);
+}
+
 void WavFileManager::printInfo()
 {
     if(audioBuffer.size() > 0)

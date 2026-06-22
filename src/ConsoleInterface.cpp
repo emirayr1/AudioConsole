@@ -3,6 +3,7 @@
 #include <string>
 #include "ConsoleInterface.h"
 #include "../include/Effect/AudioEffect.h"
+#include "../include/Effect/Gain.h"
 
 void ConsoleInterface::showMenu(const std::string& title, const std::vector<MenuItem>& items)
 {
@@ -41,7 +42,7 @@ void ConsoleInterface::displayMainMenu()
         {'1', "Load Wav File",     [this]() { c_loadWav(); displayMainMenu(); }},
         {'2', "Basic Info",        [this]() { FileManager.printInfo(); displayMainMenu(); }},
         {'3', "Apply Effect",      [this]() { displayEffectMenu(); }},
-        {'4', "Crop File",         [this]() { /* Crop fonksiyonun */ displayMainMenu(); }},
+        {'4', "Crop File",         [this]() { displayCropOptions(); displayMainMenu(); }},
         {'5', "Save Wav File",     [this]() { c_saveWav(); displayMainMenu(); }},
         {'6', "Exit",              [this]() { std::cout << "Bye Bye!\n"; }}
     };
@@ -79,9 +80,11 @@ void ConsoleInterface::displayDistortionOptions()
 {
     // Buradaki lambdalar doğrudan senin AudioProcessor sınıfına sinyal gönderir!
     std::vector<MenuItem> distM = {
-        {'1', "Hardclip", [this]() { Processor.updateEffectChain(AudioProcessor::EffectType::Distortion, 1); displayMainMenu(); }},
-        {'2', "Softclip", [this]() { Processor.updateEffectChain(AudioProcessor::EffectType::Distortion, 2); displayMainMenu(); }},
-        {'3', "Fuzz",     [this]() { Processor.updateEffectChain(AudioProcessor::EffectType::Distortion, 3); displayMainMenu(); }},
+        {'1', "Hardclip", [this]() { 
+            displayMainMenu(); 
+        }},
+        {'2', "Softclip", [this]() { displayMainMenu(); }},
+        {'3', "Fuzz",     [this]() { displayMainMenu(); }},
         {'4', "Back", [this]() { displayEffectMenu(); }}
     };
 
@@ -90,14 +93,108 @@ void ConsoleInterface::displayDistortionOptions()
 
 void ConsoleInterface::displayGainOptions()
 {
-    std::vector<MenuItem> distM = {
-        {'1', "Linear (0 - 1)", [this](){ Processor.updateEffectChain(AudioProcessor::EffectType::Gain, 0); displayMainMenu(); }},
-        {'2', "Decibel (-48dbFS - 0dbFS)", [this](){ Processor.updateEffectChain(AudioProcessor::EffectType::Gain, 1); displayMainMenu(); }},
+    std::vector<MenuItem> gainM = {
+        {'1', "Linear (0 - 1)", [this](){ 
+            float val = getFloatInput("\n Please give a value between 0 - 1: ", 0.0f, 1.0f);
+
+            Gain* gain = Processor.updateEffectChain<Gain>();
+
+            gain->setType(Gain::GainType::Linear);
+            gain->setValue(val);
+
+            displayMainMenu();
+         }},
+        {'2', "Decibel (-48dbFS - 0dbFS)", [this](){ 
+            float val = getFloatInput("\n Please give a value between -48.0 - 0: ", -48.0f, 0.0f);
+
+            Gain* gain = Processor.updateEffectChain<Gain>();
+
+            gain->setType(Gain::GainType::Decibel);
+            gain->setValue(val);
+
+            displayMainMenu();
+         }},
         {'3', "Back", [this](){ displayMainMenu(); }}
     };
 
-    showMenu("Gain Options", distM);
+    showMenu("Gain Options", gainM);
 }
+
+void ConsoleInterface::displayCropOptions()
+{
+    std::vector<MenuItem> cropM = {
+        {'1', "Crop by Sample Count", [this]() { 
+            std::pair<float, float> values = getRangeValue("Enter Start and Finish Value!", 0.0f, FileManager.getAudioBufferSize() / FileManager.getNumChannels());
+        
+        FileManager.cropWaveFile(values, 1);
+        displayMainMenu(); 
+
+        }},
+        {'2', "Crop by Second", [this]() { 
+            std::pair<float, float> values = getRangeValue("Enter Start and Finish Value!", 0.0f, (float)FileManager.durationInSeconds);
+            FileManager.cropWaveFile(values, 0);
+            displayMainMenu(); }},
+        {'3', "Back", [this](){ displayMainMenu(); }}
+    };
+
+    std::cout << "Your File is: " << FileManager.durationInSeconds << "seconds long" << std::endl;
+    showMenu("Crop Options", cropM);
+}
+
+std::pair<float, float> ConsoleInterface::getRangeValue(const std::string& prompt, float fileMin, float fileMax)
+{
+    std::cout << prompt << " (Gecerli aralik: " << fileMin << " - " << fileMax << ")\n";
+    float minVal = 0.0f;
+    float maxVal = 0.0f;
+    
+    while (true)
+    {
+        minVal = getFloatInput("Enter Start Value: ", fileMin, fileMax);
+        maxVal = getFloatInput("Enter Finish Value: ", fileMin, fileMax);
+
+        if (minVal <= maxVal)
+        {
+            return std::make_pair(minVal, maxVal);
+        }
+        else
+        {
+            std::cout << "Hata: Baslangic degeri, bitis degerinden buyuk olamaz. Lutfen tekrar girin.\n";
+        }
+    }
+}
+
+float ConsoleInterface::getFloatInput(const std::string& prompt, float minValue, float maxValue)
+{
+    float value = 0.0f;
+    while (true)
+    {
+        std::cout << prompt;
+        std::string input;
+        std::getline(std::cin, input);
+
+        try
+        {
+            value = std::stof(input); // String'i float'a çevir
+            if (value >= minValue && value <= maxValue)
+            {
+                return value; // Değer başarılı ve sınırlar içindeyse döngüyü kırıp döndür
+            }
+            else
+            {
+                std::cout << "Hata: Lutfen " << minValue << " ile " << maxValue << " arasinda bir deger girin.\n";
+            }
+        }
+        catch (const std::invalid_argument&)
+        {
+            std::cout << "Hata: Gecersiz format! Lutfen bir sayi girin.\n";
+        }
+        catch (const std::out_of_range&)
+        {
+            std::cout << "Hata: Girdiginiz sayi sınırların dışında.\n";
+        }
+    }
+}
+
 
 bool ConsoleInterface::c_loadWav()
 {

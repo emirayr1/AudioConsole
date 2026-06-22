@@ -11,12 +11,18 @@ public:
         Decibel
     };
 
-    Gain(float value, GainType gainType)
-    :  m_value(value), m_gainType(gainType) {}
+    Gain() = default;
+    ~Gain() = default;
 
     void process(std::vector<float>& buffer) override;
 
     std::string getName() const override {return "Gain";}
+    void setParam() override {}
+
+    void setValue(float _value) {m_value = _value;}
+    void setType(GainType _type) {m_gainType = _type; }
+
+
     float m_value;
     GainType m_gainType;
 };

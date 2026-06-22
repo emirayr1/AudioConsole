@@ -1,16 +1,25 @@
 #include "../../include/Effect/Gain.h"
-#include <algorithm>
 #include <iostream>
+#include <cmath>
 
 void Gain::process(std::vector<float>& buffer)
 {
-    if(m_value < 1 && m_value > 0)
+    if(m_gainType == Gain::GainType::Linear)
     {
         for(size_t i = 0; i < buffer.size(); i++)
         {
-            buffer[i] *= 0.1f;
+            buffer[i] *= m_value;
         }
-    }else{
-        std::cout << "Value must between 0-1" << std::endl;
+    }
+    else if(m_gainType == Gain::GainType::Decibel)
+    {
+        float linearValue = powf(10.0f, (m_value / 20.0f));
+
+        std::cout << "Decibel: " << m_value <<" Linear Value is: " << linearValue << std::endl;
+
+        for(size_t i = 0; i < buffer.size(); i++)
+        {
+            buffer[i] *= linearValue;
+        }
     }
 }

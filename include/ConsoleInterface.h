@@ -7,6 +7,8 @@
 #include "AudioProcessor.h"
 
 
+class Gain;
+
 struct MenuItem{
     char key;
     std::string text;
@@ -43,9 +45,14 @@ public:
     void displayDistortionOptions();
     void displayReverbOptions();
     void displayGainOptions();
+    void displayCropOptions();
 
     bool c_loadWav();
     bool c_saveWav();
+
+    float getFloatInput(const std::string& prompt, float minValue, float maxValue);
+    std::pair<float, float> getRangeValue(const std::string& prompt, float fileMin, float fileMax);
+
 
     int run();
 

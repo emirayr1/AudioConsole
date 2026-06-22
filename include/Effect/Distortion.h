@@ -15,6 +15,7 @@ public:
 
     void process(std::vector<float>& buffer) override;
     std::string getName() const override { return "Distortion"; }
+    void setParam() override {}
 
     DistortionType m_type;
     float m_drive;

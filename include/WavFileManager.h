@@ -8,6 +8,8 @@ class WavFileManager
 public:
     bool loadWav(std::string filePath);
     bool saveWav(std::string filePath);
+    void cropWaveFile(std::pair<float, float> range, int type = 0);
+
     void printInfo();
 
     char chunkID[4];
@@ -30,5 +32,9 @@ public:
     std::vector<float> audioBuffer;
 
     std::vector<float>& getAudioBuffer() { return audioBuffer; }
+    size_t getAudioBufferSize() { return audioBuffer.size(); }
+    int getNumChannels() {return (int)numChannels; }
+    float getSampleRate() {return (float)sampleRate; }
+
 private:
 };
