@@ -78,7 +78,6 @@ void ConsoleInterface::displayEffectMenu()
 
 void ConsoleInterface::displayDistortionOptions()
 {
-    // Buradaki lambdalar doğrudan senin AudioProcessor sınıfına sinyal gönderir!
     std::vector<MenuItem> distM = {
         {'1', "Hardclip", [this]() { 
             displayMainMenu(); 
@@ -194,7 +193,6 @@ float ConsoleInterface::getFloatInput(const std::string& prompt, float minValue,
         }
     }
 }
-
 
 bool ConsoleInterface::c_loadWav()
 {

@@ -39,8 +39,8 @@ EffectClass* AudioProcessor::updateEffectChain()
 
    for (const auto& eff : effectChain) {
         if (eff->getName() == effect->getName()) {
-            std::cout << "⚠️ Zincirde zaten bu efekt var!" << std::endl;
-            return nullptr; // Koruma: Varsa nullptr dönüyoruz
+            std::cout << "!" << std::endl;
+            return nullptr;
         }
     }
     

@@ -17,7 +17,6 @@ public:
     void process(std::vector<float>& buffer) override;
 
     std::string getName() const override {return "Gain";}
-    void setParam() override {}
 
     void setValue(float _value) {m_value = _value;}
     void setType(GainType _type) {m_gainType = _type; }
